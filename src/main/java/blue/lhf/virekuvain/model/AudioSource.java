@@ -30,7 +30,7 @@ public class AudioSource implements Closeable {
         return null;
     }
 
-    public double[][] getBuf() {
+    public double[][] getBuffer() {
         return this.interpreter.getBuffer();
     }
 
@@ -67,5 +67,13 @@ public class AudioSource implements Closeable {
     @Override
     public void close() {
         this.interpreter.close();
+    }
+
+    public int getChannels() {
+        return this.interpreter.getChannels();
+    }
+
+    public float getFrameRate() {
+        return this.interpreter.getFrameRate();
     }
 }

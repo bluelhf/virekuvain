@@ -5,10 +5,11 @@ import blue.lhf.virekuvain.model.*;
 import java.awt.*;
 
 public class WaveformVisualiser extends Visualiser {
+
     @Override
     protected void onUpdate(Graphics g, int width, int height, AudioSource source) {
-        final double[][] samples = source.getBuf();
-        final double[][] channels = new double[2][samples.length];
+        final double[][] samples = source.getBuffer();
+        final double[][] channels = new double[source.getChannels()][samples.length];
         for (int i = 0; i < samples.length; ++i) {
             final double[] sample = samples[i];
             for (int j = 0; j < sample.length; ++j) {
@@ -18,15 +19,18 @@ public class WaveformVisualiser extends Visualiser {
 
         final double[] max = new double[channels.length];
         for (int i = 0, len = channels.length; i < len; i++) {
-            final double[] channel = channels[i];
-            g.setColor(i % 2 == 0 ? Color.RED : Color.BLUE);
+            final double[] raw = channels[i];
+            final double[] channel = new double[source.getBufferSize()];
+            System.arraycopy(raw, 0, channel, channel.length - raw.length, raw.length);
+
+            g.setColor(i % 2 == 0 ? getPalette().primary() : getPalette().secondary());
             int px = 0;
             int py = (int) (getHeight() / 2);
-            for (double j = 0, cLen = channel.length; j < cLen; j += channel.length / 256.0) {
-                final double value = channel[(int) j];
+            for (int j = 0, cLen = channel.length; j < cLen; ++j) {
+                final double value = channel[j];
                 if (value > max[i]) max[i] = value;
 
-                final double progress = j / cLen;
+                final double progress = j / (double) cLen;
                 final int x = (int) (progress * getWidth());
                 final int y = (int) (getHeight() / 2.0 - value * getHeight() / 4.0);
                 if (px == x && py == y) continue;

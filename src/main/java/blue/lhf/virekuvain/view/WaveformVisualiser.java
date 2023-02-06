@@ -8,14 +8,7 @@ public class WaveformVisualiser extends Visualiser {
 
     @Override
     protected void onUpdate(Graphics g, int width, int height, AudioSource source) {
-        final double[][] samples = source.getBuffer();
-        final double[][] channels = new double[source.getChannels()][samples.length];
-        for (int i = 0; i < samples.length; ++i) {
-            final double[] sample = samples[i];
-            for (int j = 0; j < sample.length; ++j) {
-                channels[j][i] = sample[j];
-            }
-        }
+        final double[][] channels = transpose(source.getBuffer(), source.getChannels());
 
         final double[] max = new double[channels.length];
         for (int i = 0, len = channels.length; i < len; i++) {
@@ -42,4 +35,5 @@ public class WaveformVisualiser extends Visualiser {
             g.drawLine(px, py, (int) getWidth(), (int) (getHeight() / 2.0));
         }
     }
+
 }

@@ -9,6 +9,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.*;
 import javafx.scene.image.*;
 import javafx.scene.input.MouseEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -50,6 +51,18 @@ public abstract class Visualiser extends Canvas implements Closeable {
          * inheriting bounds by default.
          * */
         this.parentProperty().addListener((val, prev, parent) -> initialise(parent));
+    }
+
+    protected static double[][] transpose(double[][] data, int rows) {
+        final double[][] channels = new double[rows][data.length];
+        for (int i = 0; i < data.length; ++i) {
+            final double[] sample = data[i];
+            for (int j = 0; j < sample.length; ++j) {
+                channels[j][i] = sample[j];
+            }
+        }
+
+        return channels;
     }
 
     public ColourPalette getPalette() {

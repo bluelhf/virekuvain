@@ -4,7 +4,7 @@ import java.time.*;
 
 public abstract class TimeInterpolation {
     private Instant lastUpdate = Instant.now();
-    private final double[] values;
+    private double[] values;
 
     protected TimeInterpolation(final int length) {
         this.values = new double[length];
@@ -26,5 +26,10 @@ public abstract class TimeInterpolation {
 
     public int size() {
         return this.values.length;
+    }
+
+    public void resize(final int length) {
+        values = new double[length];
+        lastUpdate = Instant.now();
     }
 }

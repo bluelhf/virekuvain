@@ -55,9 +55,8 @@ public class FFTVisualiser extends Visualiser {
             int px = 0;
             int py = (int) getHeight();
             for (int i = 0; i < lerped.length; i++) {
-                // Index that condenses high indices into a smaller area
-                final int index = (int) (lerped.length * Math.pow(i / (double) lerped.length, 2));
                 final double progress = i / (double) lerped.length;
+                final int index = (int) (lerped.length * Math.pow(progress, 2));
                 final int x = (int) (progress * getWidth());
                 final int y = (int) (getHeight() - lerped[index] / max * getHeight());
                 if (px == x && py == y) continue;

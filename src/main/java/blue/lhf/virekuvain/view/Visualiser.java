@@ -1,41 +1,22 @@
 package blue.lhf.virekuvain.view;
 
 import blue.lhf.virekuvain.model.*;
-import javafx.application.Platform;
-import javafx.event.Event;
-import javafx.geometry.Bounds;
+import blue.lhf.virekuvain.util.*;
+import javafx.application.*;
+import javafx.beans.property.*;
 import javafx.scene.*;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.*;
-import javafx.scene.image.*;
-import javafx.scene.input.MouseEvent;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.Closeable;
-import java.nio.IntBuffer;
+import java.io.*;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.*;
 
 import static blue.lhf.virekuvain.util.Functional.returnNull;
-import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 
-public abstract class Visualiser extends Canvas implements Closeable {
-    public static final PixelFormat<IntBuffer> INT_ARGB_PRE_INSTANCE = PixelFormat.getIntArgbPreInstance();
-
+public abstract class Visualiser extends FastCanvas implements Closeable {
+    private final Property<AudioSource> source = new SimpleProperty<>(this, "source");
+    private final Property<ColourPalette> palette = new SimpleProperty<>(this, "palette");
     private final Timer timer = new Timer(true);
-    private final Object lock = new Object();
-    private AudioSource source;
-    // JavaFX pretends GraphicsContext is immediate-mode,
-    // but that's a LIE, DECEIT, and it SHOULDN'T be trusted.
-    //
-    // We draw to a BufferedImage instead.
-    private int[] pixels;
-    private BufferedImage image;
-    private WritableImage writableImage;
-    private PixelBuffer<IntBuffer> pixelBuffer;
-    private ColourPalette palette;
 
     protected Visualiser() {
         this(0, 0);
@@ -45,44 +26,23 @@ public abstract class Visualiser extends Canvas implements Closeable {
         super(width, height);
         setCacheHint(CacheHint.SPEED);
 
-        /*
-         * We can't set bounds or, by extension, draw things if we don't have a parent...
-         * We need to set our bounds to match the parent because Canvas doesn't support
-         * inheriting bounds by default.
-         * */
-        this.parentProperty().addListener((val, prev, parent) -> initialise(parent));
-    }
-
-    protected static double[][] transpose(double[][] data, int rows) {
-        final double[][] channels = new double[rows][data.length];
-        for (int i = 0; i < data.length; ++i) {
-            final double[] sample = data[i];
-            for (int j = 0; j < sample.length; ++j) {
-                channels[j][i] = sample[j];
-            }
-        }
-
-        return channels;
+        this.palette.addListener((val, prev, next) -> {
+            if (this.getParent() == null) return;
+            this.getParent().setStyle(
+                this.getParent().getStyle().replaceAll("-fx-background-color:[^;]+;", "")
+                + "-fx-background-color: " + ColourPalette.toWeb(next.background()) + ";");
+        });
     }
 
     public ColourPalette getPalette() {
-        return palette;
+        return palette.getValue();
     }
 
-    public void setSource(final AudioSource source) {
-        this.source = source;
-    }
-
-    private void initialise(final Parent parent) {
-        parent.layoutBoundsProperty().addListener((val, prev, next) -> buildImage(next));
-
-        // Mouse events actually incur a pretty big performance hit... Disable them!
-        parent.addEventFilter(MouseEvent.ANY, Event::consume);
-
+    @Override
+    protected void initialise() {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                if (image == null) return;
                 final CompletableFuture<Void> future = new CompletableFuture<>();
                 update();
 
@@ -94,22 +54,6 @@ public abstract class Visualiser extends Canvas implements Closeable {
                 future.exceptionally(returnNull(Throwable::printStackTrace));
             }
         }, 0, (long) (1000.0 / 144.0));
-
-    }
-
-    private void buildImage(final Bounds bounds) {
-        if (bounds.getWidth() == 0 || bounds.getHeight() == 0) return;
-        synchronized (lock) {
-            this.setWidth(bounds.getWidth());
-            this.setHeight(bounds.getHeight());
-            this.image = new BufferedImage((int) bounds.getWidth(), (int) bounds.getHeight(), TYPE_INT_ARGB);
-            this.pixels = new int[image.getWidth() * image.getHeight()];
-
-            final IntBuffer intBuffer = IntBuffer.wrap(pixels);
-            this.pixelBuffer = new PixelBuffer<>(
-                image.getWidth(), image.getHeight(), intBuffer, INT_ARGB_PRE_INSTANCE);
-            this.writableImage = new WritableImage(pixelBuffer);
-        }
     }
 
     protected abstract void onUpdate(
@@ -119,20 +63,16 @@ public abstract class Visualiser extends Canvas implements Closeable {
     );
 
     public void update() {
-        if (source == null) return;
-        synchronized (lock) {
-            final Graphics g = image.getGraphics();
-            g.setColor(palette.background());
-            g.fillRect(0, 0, image.getWidth(), image.getHeight());
-            onUpdate(g, image.getWidth(), image.getHeight(), source);
-            image.getRaster().getDataElements(0, 0, image.getWidth(), image.getHeight(), pixels);
-        }
-    }
+        if (source.getValue() == null) return;
 
-    public void draw() {
-        final GraphicsContext gc = getGraphicsContext2D();
-        this.pixelBuffer.updateBuffer(b -> null);
-        gc.drawImage(writableImage, 0, 0);
+        try (final ImageHandle handle = open()) {
+            if (handle == null) return;
+
+            final Graphics g = handle.getGraphics();
+            g.setColor(getPalette().background());
+            g.fillRect(0, 0, handle.getWidth(), handle.getHeight());
+            onUpdate(g, handle.getWidth(), handle.getHeight(), source.getValue());
+        }
     }
 
 
@@ -141,10 +81,11 @@ public abstract class Visualiser extends Canvas implements Closeable {
         timer.cancel();
     }
 
-    public void setColourPalette(final ColourPalette palette) {
-        this.palette = palette;
-        this.getParent().setStyle(
-            this.getParent().getStyle().replaceAll("-fx-background-color:[^;]+;", "")
-                + "-fx-background-color: " + ColourPalette.toWeb(palette.background()) + ";");
+    public Property<ColourPalette> paletteProperty() {
+        return this.palette;
+    }
+
+    public Property<AudioSource> sourceProperty() {
+        return this.source;
     }
 }

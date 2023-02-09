@@ -4,7 +4,7 @@ import javax.sound.sampled.*;
 import java.util.concurrent.*;
 
 public class CircularAudioInterpreter extends AudioInterpreter {
-    private final LinkedBlockingDeque<double[]> buffer;
+    private LinkedBlockingDeque<double[]> buffer;
 
     public CircularAudioInterpreter(TargetDataLine line, final int bufferSize) throws LineUnavailableException {
         super(line);
@@ -22,5 +22,14 @@ public class CircularAudioInterpreter extends AudioInterpreter {
         }
 
         buffer.addLast(value);
+    }
+
+    public void resize(final int newBufferSize) {
+        final LinkedBlockingDeque<double[]> newBuffer = new LinkedBlockingDeque<>(newBufferSize);
+        while (newBuffer.remainingCapacity() > 0 && !buffer.isEmpty()) {
+            newBuffer.addLast(buffer.removeFirst());
+        }
+
+        this.buffer = newBuffer;
     }
 }

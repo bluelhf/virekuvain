@@ -1,14 +1,15 @@
-package blue.lhf.virekuvain.view;
+package blue.lhf.virekuvain.view.visualisers;
 
 import blue.lhf.virekuvain.model.*;
+import blue.lhf.virekuvain.view.*;
 
 import java.awt.*;
 
+@VisualiserMetadata(name = "Waveform")
 public class WaveformVisualiser extends Visualiser {
-
     @Override
     protected void onUpdate(Graphics g, int width, int height, AudioSource source) {
-        final double[][] channels = transpose(source.getBuffer(), source.getChannels());
+        final double[][] channels = source.getChannels();
 
         final double[] max = new double[channels.length];
         for (int i = 0, len = channels.length; i < len; i++) {
@@ -25,7 +26,7 @@ public class WaveformVisualiser extends Visualiser {
 
                 final double progress = j / (double) cLen;
                 final int x = (int) (progress * getWidth());
-                final int y = (int) (getHeight() / 2.0 - value * getHeight() / 4.0);
+                final int y = (int) (getHeight() / 2.0 - value * getHeight() / 3.0);
                 if (px == x && py == y) continue;
                 g.drawLine(px, py, x, y);
                 px = x;

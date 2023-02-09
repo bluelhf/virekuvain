@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import blue.lhf.virekuvain.view.FFTVisualiser?>
+<?import blue.lhf.virekuvain.view.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.paint.*?>
 
@@ -17,15 +16,7 @@
     <TabPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" side="LEFT" tabClosingPolicy="UNAVAILABLE">
         <Tab text="Visualiser">
             <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
-                <Pane style="-fx-background-insets: -5; -fx-background-radius: 5;" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
-                    <opaqueInsets>
-                        <Insets />
-                    </opaqueInsets>
-                    <FFTVisualiser fx:id="visualiser" />
-               <effect>
-                  <Bloom threshold="0.15" />
-               </effect>
-                </Pane>
+                 <VisualiserMultiplexer fx:id="multiplexer" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
                 <padding>
                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                 </padding>
@@ -34,13 +25,24 @@
         <Tab text="Settings">
             <TabPane tabClosingPolicy="UNAVAILABLE">
                 <Tab text="Audio">
-                    <FlowPane hgap="5.0" vgap="5.0">
+                    <GridPane hgap="5.0" vgap="5.0">
+                        <columnConstraints>
+                            <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" vgrow="NEVER"/>
+                            <RowConstraints minHeight="10.0" vgrow="NEVER"/>
+                            <RowConstraints minHeight="10.0" vgrow="NEVER"/>
+                        </rowConstraints>
                         <padding>
-                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                         </padding>
-                  <Label text="Source" />
-                        <ChoiceBox fx:id="audioSourceBox" prefWidth="150.0" />
-                    </FlowPane>
+                        <TextField fx:id="bufferSizeText" text="44100" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                        <Label text="Buffer Size" GridPane.rowIndex="1"/>
+                        <Label text="Source"/>
+                        <ChoiceBox fx:id="audioSourceBox" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS"/>
+                    </GridPane>
                 </Tab>
                 <Tab text="Design">
                     <GridPane hgap="5.0" vgap="5.0">
@@ -53,7 +55,7 @@
                             <RowConstraints minHeight="10.0" vgrow="NEVER" />
                             <RowConstraints minHeight="10.0" vgrow="NEVER" />
                         </rowConstraints>
-                        <ColorPicker fx:id="primaryColour" onAction="#colourUpdated" prefWidth="150.0" GridPane.columnIndex="1">
+                        <ColorPicker fx:id="primaryColour" onAction="#onColourUpdated" prefWidth="150.0" GridPane.columnIndex="1">
                             <value>
                                 <Color red="0.616837203502655" green="0.43104287981987" blue="0.8026315569877625" />
                             </value>
@@ -61,12 +63,12 @@
                         <Label text="Primary Colour">
                         </Label>
                         <Label text="Secondary Colour" GridPane.rowIndex="1" />
-                        <ColorPicker fx:id="secondaryColour" onAction="#colourUpdated" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <ColorPicker fx:id="secondaryColour" onAction="#onColourUpdated" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                             <value>
                                 <Color red="1.0" green="0.8314814567565918" blue="0.2777777910232544" />
                             </value>
                         </ColorPicker>
-                        <ColorPicker fx:id="backgroundColour" onAction="#colourUpdated" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <ColorPicker fx:id="backgroundColour" onAction="#onColourUpdated" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                             <value>
                                 <Color />
                             </value>
@@ -75,6 +77,24 @@
                   <padding>
                      <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                   </padding>
+                    </GridPane>
+                </Tab>
+                <Tab text="Visualiser">
+                    <GridPane hgap="5.0" vgap="5.0">
+                        <columnConstraints>
+                            <ColumnConstraints halignment="RIGHT" hgrow="NEVER" minWidth="10.0"/>
+                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0"/>
+                        </columnConstraints>
+                        <rowConstraints>
+                            <RowConstraints minHeight="10.0" vgrow="NEVER"/>
+                            <RowConstraints minHeight="10.0" vgrow="NEVER"/>
+                            <RowConstraints minHeight="10.0" vgrow="NEVER"/>
+                        </rowConstraints>
+                        <padding>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                        </padding>
+                        <Label text="Type"/>
+                        <ChoiceBox fx:id="visualiserBox" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS"/>
                     </GridPane>
                 </Tab>
             </TabPane>

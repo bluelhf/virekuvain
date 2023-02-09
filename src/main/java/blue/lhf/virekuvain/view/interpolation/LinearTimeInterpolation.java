@@ -1,4 +1,4 @@
-package blue.lhf.virekuvain.view;
+package blue.lhf.virekuvain.view.interpolation;
 
 public class LinearTimeInterpolation extends TimeInterpolation {
     private final double duration;
@@ -10,6 +10,6 @@ public class LinearTimeInterpolation extends TimeInterpolation {
 
     @Override
     protected double interpolate(double current, double target, double dt) {
-        return current + (target - current) * (0.1);
+        return current + (target - current) * (dt / duration);
     }
 }

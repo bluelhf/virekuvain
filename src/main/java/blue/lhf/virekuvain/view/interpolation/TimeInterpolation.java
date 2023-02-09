@@ -1,4 +1,4 @@
-package blue.lhf.virekuvain.view;
+package blue.lhf.virekuvain.view.interpolation;
 
 import java.time.*;
 

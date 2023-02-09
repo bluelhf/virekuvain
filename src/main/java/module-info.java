@@ -8,6 +8,8 @@ module blue.lhf.virekuvain {
 
     exports blue.lhf.virekuvain;
     exports blue.lhf.virekuvain.controller;
+    opens blue.lhf.virekuvain.view to javafx.fxml;
+    opens blue.lhf.virekuvain.view.interpolation to javafx.fxml;
+    opens blue.lhf.virekuvain.view.visualisers to javafx.fxml;
     opens blue.lhf.virekuvain.controller to javafx.fxml;
-    exports blue.lhf.virekuvain.view;
 }

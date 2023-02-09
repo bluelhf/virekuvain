@@ -1,5 +1,7 @@
 package blue.lhf.virekuvain.model;
 
+import blue.lhf.virekuvain.util.*;
+
 import javax.sound.sampled.*;
 import java.io.*;
 
@@ -7,7 +9,7 @@ public class AudioSource implements Closeable {
     private Mixer mixer;
     private TargetDataLine line;
     private CircularAudioInterpreter interpreter;
-    private final int bufferSize;
+    private int bufferSize;
 
     public AudioSource(final int bufferSize, final Mixer mixer) throws LineUnavailableException {
         this.bufferSize = bufferSize;
@@ -60,6 +62,11 @@ public class AudioSource implements Closeable {
         this.interpreter.start();
     }
 
+    public void resize(final int newBufferSize) {
+        this.interpreter.resize(newBufferSize);
+        this.bufferSize = newBufferSize;
+    }
+
     public int getBufferSize() {
         return bufferSize;
     }
@@ -69,8 +76,12 @@ public class AudioSource implements Closeable {
         this.interpreter.close();
     }
 
-    public int getChannels() {
+    public int getChannelCount() {
         return this.interpreter.getChannels();
+    }
+
+    public double[][] getChannels() {
+        return ProcessingUtils.transpose(getBuffer(), getChannelCount());
     }
 
     public float getFrameRate() {

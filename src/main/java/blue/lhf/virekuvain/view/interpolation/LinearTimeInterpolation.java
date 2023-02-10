@@ -1,5 +1,7 @@
 package blue.lhf.virekuvain.view.interpolation;
 
+import static java.lang.Math.min;
+
 public class LinearTimeInterpolation extends TimeInterpolation {
     private final double duration;
 
@@ -10,6 +12,6 @@ public class LinearTimeInterpolation extends TimeInterpolation {
 
     @Override
     protected double interpolate(double current, double target, double dt) {
-        return current + (target - current) * (dt / duration);
+        return current + (target - current) * min((dt / duration), 1);
     }
 }

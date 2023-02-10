@@ -44,14 +44,19 @@ public abstract class Visualiser extends FastCanvas implements Closeable {
             @Override
             public void run() {
                 final CompletableFuture<Void> future = new CompletableFuture<>();
-                update();
-
                 Platform.runLater(() -> {
                     draw();
                     future.complete(null);
                 });
 
-                future.exceptionally(returnNull(Throwable::printStackTrace));
+                future.exceptionally(returnNull(Throwable::printStackTrace)).join();
+            }
+        }, 0, (long) (1000.0 / 60.0));
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                update();
             }
         }, 0, (long) (1000.0 / 144.0));
     }

@@ -40,6 +40,9 @@ public class ProgramController {
     private ChoiceBox<Class<Visualiser>> visualiserBox;
 
     @FXML
+    private Label bufferSizeLabel;
+
+    @FXML
     private TextField bufferSizeText;
 
     private final IntegerProperty bufferSize = new SimpleIntegerProperty(DEFAULT_BUFFER_SIZE);
@@ -57,6 +60,10 @@ public class ProgramController {
     }
 
     private void populateBufferSize() {
+        if (System.getProperty("virekuvain.showBufferSize") == null) {
+            bufferSizeText.setVisible(false);
+            bufferSizeLabel.setVisible(false);
+        }
         bufferSize.bind(bufferSizeText.textProperty().map(Integer::parseInt));
         bufferSizeText.setTextFormatter(new TextFormatter<>(new IntegerStringConverter()));
         bufferSizeText.setText(String.valueOf(DEFAULT_BUFFER_SIZE));

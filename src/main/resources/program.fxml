@@ -39,7 +39,7 @@
                             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
                         </padding>
                         <TextField fx:id="bufferSizeText" text="44100" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
-                        <Label text="Buffer Size" GridPane.rowIndex="1"/>
+                        <Label fx:id="bufferSizeLabel" text="Buffer Size" GridPane.rowIndex="1"/>
                         <Label text="Source"/>
                         <ChoiceBox fx:id="audioSourceBox" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS"/>
                     </GridPane>

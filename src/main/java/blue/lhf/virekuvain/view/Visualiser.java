@@ -52,6 +52,9 @@ public abstract class Visualiser extends FastCanvas implements Closeable {
                 future.exceptionally(returnNull(Throwable::printStackTrace)).join();
             }
         }, 0, (long) (1000.0 / 144.0));
+        // TODO(ilari): sync above period with monitor?
+        //                - how do we get the monitor the application is on?
+        //                - how do we get its fps?
 
         timer.schedule(new TimerTask() {
             @Override

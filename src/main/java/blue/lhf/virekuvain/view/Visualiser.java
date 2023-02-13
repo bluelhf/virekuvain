@@ -40,7 +40,7 @@ public abstract class Visualiser extends FastCanvas implements Closeable {
 
     @Override
     protected void initialise() {
-        timer.scheduleAtFixedRate(new TimerTask() {
+        timer.schedule(new TimerTask() {
             @Override
             public void run() {
                 final CompletableFuture<Void> future = new CompletableFuture<>();
@@ -51,7 +51,7 @@ public abstract class Visualiser extends FastCanvas implements Closeable {
 
                 future.exceptionally(returnNull(Throwable::printStackTrace)).join();
             }
-        }, 0, (long) (1000.0 / 60.0));
+        }, 0, (long) (1000.0 / 144.0));
 
         timer.schedule(new TimerTask() {
             @Override

@@ -114,6 +114,7 @@ public abstract class AudioInterpreter extends Thread implements Closeable {
             ? abs(y) * (1 + log(A)) / A
             : pow(E, -1 + abs(y) * (1 + log(A))) / A;
     }
+
     protected static final double U = 255;
 
     protected double expandUlaw(final double y) {

@@ -5,6 +5,8 @@ import edu.emory.mathcs.jtransforms.fft.*;
 import java.util.*;
 import java.util.function.*;
 
+import static java.lang.Math.log10;
+
 public class ProcessingUtils {
     private ProcessingUtils() {
     }
@@ -78,5 +80,29 @@ public class ProcessingUtils {
         }
 
         return smoothed;
+    }
+
+    public static double[] averages(final double[][] data) {
+        final int len = data.length;
+        final double[] result = new double[len];
+        for (int i = 0; i < len; i++) {
+            final double[] subarray = data[i];
+            for (int j = 0; j < subarray.length; j++) {
+                result[i] += subarray[j];
+            }
+
+            result[i] /= subarray.length;
+        }
+
+        return result;
+    }
+
+    public static double map(final double val, final double min1, final double max1, final double min2, final double max2) {
+        // f(x) = (x - input_start) / (input_end - input_start) * (output_end - output_start) + output_start
+        return (val - min1) / (max1 - min1) * (max2 - min2) + min2;
+    }
+
+    public static double toDBFS(final double value) {
+        return 20 * log10(value);
     }
 }

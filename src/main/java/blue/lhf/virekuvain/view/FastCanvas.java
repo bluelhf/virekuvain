@@ -50,8 +50,11 @@ public abstract class FastCanvas extends Canvas {
         initialise();
     }
 
-    protected abstract void initialise();
+    protected void onResize(final Graphics graphics, final int width, final int height) {
 
+    }
+
+    protected abstract void initialise();
     protected @Nullable ImageHandle open() {
         if (this.image == null) return null;
         return new ImageHandle();
@@ -69,6 +72,8 @@ public abstract class FastCanvas extends Canvas {
             this.pixelBuffer = new PixelBuffer<>(
                 image.getWidth(), image.getHeight(), intBuffer, INT_ARGB_PRE_INSTANCE);
             this.writableImage = new WritableImage(pixelBuffer);
+
+            this.onResize(image.getGraphics(), image.getWidth(), image.getHeight());
         } lock.release();
     }
 

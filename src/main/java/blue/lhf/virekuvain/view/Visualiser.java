@@ -77,12 +77,19 @@ public abstract class Visualiser extends FastCanvas implements Closeable {
             if (handle == null) return;
 
             final Graphics g = handle.getGraphics();
-            g.setColor(getPalette().background());
-            g.fillRect(0, 0, handle.getWidth(), handle.getHeight());
+
+            if (drawBackground()) {
+                g.setColor(getPalette().background());
+                g.fillRect(0, 0, handle.getWidth(), handle.getHeight());
+            }
+
             onUpdate(g, handle.getWidth(), handle.getHeight(), source.getValue());
         }
     }
 
+    public boolean drawBackground() {
+        return true;
+    }
 
     @Override
     public void close() {

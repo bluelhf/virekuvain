@@ -19,15 +19,15 @@ public class SpectrogramVisualiser extends Visualiser {
     private LinearTimeInterpolation lerp;
 
     protected Color toColour(final double dbfs) {
-        if (!isFinite(dbfs) || dbfs < DBFS_MINIMUM) return getPalette().primary();
-        final Color minimum = getPalette().primary();
-        final Color maximum = getPalette().secondary();
+        final Color minimum = getPalette().background();
+        final Color maximum = getPalette().primary();
 
+        if (!isFinite(dbfs) || dbfs < DBFS_MINIMUM) return minimum;
         final double progress = Math.pow(1 - dbfs / DBFS_MINIMUM, 9);
         return new Color(
-            clamp((int) (progress * maximum.getRed() + (1 - progress) * minimum.getRed()), 0, 255),
+            clamp((int) (progress * maximum.getRed()   + (1 - progress) * minimum.getRed()),   0, 255),
             clamp((int) (progress * maximum.getGreen() + (1 - progress) * minimum.getGreen()), 0, 255),
-            clamp((int) (progress * maximum.getBlue() + (1 - progress) * minimum.getBlue()), 0, 255),
+            clamp((int) (progress * maximum.getBlue()  + (1 - progress) * minimum.getBlue()),  0, 255),
             clamp((int) (progress * maximum.getAlpha() + (1 - progress) * minimum.getAlpha()), 0, 255)
         );
     }

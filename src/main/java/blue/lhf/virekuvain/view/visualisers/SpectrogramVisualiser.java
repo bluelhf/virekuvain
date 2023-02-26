@@ -3,6 +3,7 @@ package blue.lhf.virekuvain.view.visualisers;
 import blue.lhf.virekuvain.model.AudioSource;
 import blue.lhf.virekuvain.model.VisualiserMetadata;
 import blue.lhf.virekuvain.view.Visualiser;
+import blue.lhf.virekuvain.view.interpolation.LinearTimeInterpolation;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

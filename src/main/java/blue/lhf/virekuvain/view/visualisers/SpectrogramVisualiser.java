@@ -16,6 +16,7 @@ import static java.lang.Double.isFinite;
 public class SpectrogramVisualiser extends Visualiser {
 
     public static final double DBFS_MINIMUM = -120;
+    private LinearTimeInterpolation lerp;
 
     protected Color toColour(final double dbfs) {
         if (!isFinite(dbfs) || dbfs < DBFS_MINIMUM) return getPalette().primary();
@@ -44,13 +45,19 @@ public class SpectrogramVisualiser extends Visualiser {
 
     @Override
     protected void onUpdate(Graphics graphics, int width, int height, AudioSource source) {
-        graphics.copyArea(1, 0, width - 1, height, -1, 0);
         final double[] mono = averages(source.getBuffer());
         final double[] spectrum = fourierTransform(mono);
         final double[] cutoff = binsInRange(20, 15_000, spectrum, source.getFrameRate());
         double[] magnitudes = toMagnitudes(cutoff);
         magnitudes = Arrays.stream(magnitudes).map(Math::cbrt).toArray();
 
+        if (lerp == null || lerp.size() != magnitudes.length) {
+            lerp = new LinearTimeInterpolation(magnitudes.length, 70);
+        }
+
+        magnitudes = lerp.update(magnitudes);
+
+        graphics.copyArea(1, 0, width - 1, height, -1, 0);
         final BufferedImage image = new BufferedImage(1, height, TYPE_INT_ARGB);
 
         for (int y = 0; y < height; y++) {

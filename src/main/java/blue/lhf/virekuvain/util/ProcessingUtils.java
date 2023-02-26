@@ -63,7 +63,12 @@ public class ProcessingUtils {
         return Math.max(min, Math.min(max, value));
     }
 
+    public static double clamp(final double value, final double min, final double max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
     public static double indexByDouble(final double[] data, double index) {
+        index = clamp(index, 0, data.length - 1);
         if ((int) index == index) return data[(int) index];
         final int lower = (int) Math.floor(index);
         final int upper = (int) Math.ceil(index);

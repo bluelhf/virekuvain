@@ -34,8 +34,8 @@ public class VectorscopeVisualiser extends Visualiser {
             even /= frame.length / 2.0;
             odd  /= frame.length / 2.0;
 
-            final double x = width  / 2.0 + even * viewport / 2.0;
-            final double y = height / 2.0 + odd  * viewport / 2.0;
+            final double x =  width  / 2.0 + even * viewport / 2.0;
+            final double y = -height / 2.0 + odd  * viewport / 2.0;
             graphics.drawLine((int) x, (int) y, (int) x, (int) y);
         }
     }

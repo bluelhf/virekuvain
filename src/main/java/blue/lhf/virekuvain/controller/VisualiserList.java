@@ -8,7 +8,7 @@ import javafx.collections.*;
 public class VisualiserList extends ObservableListBase<Class<Visualiser>> {
     // NOTE(ilari): Maybe a registry would be nicer?
     private static final Class<Visualiser>[] VISUALISERS = new Class[]{
-        FFTVisualiser.class, WaveformVisualiser.class, SpectrogramVisualiser.class
+        FFTVisualiser.class, WaveformVisualiser.class, SpectrogramVisualiser.class, VectorscopeVisualiser.class
     };
 
     @Override
